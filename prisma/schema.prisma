@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Este bloco define o modelo 'User' no banco de dados.
+model User {
+  id    String @id @default(uuid())
+  name  String
+  email String @unique // Define o campo 'email' como uma string na tabela e garante que cada valor seja único.
+
+  // @@map é uma anotação usada para definir o nome da tabela no banco de dados.
+  // Neste caso, a tabela correspondente a este modelo será "users".
+  @@map("users")
+}
