@@ -10,6 +10,6 @@ const prisma = new PrismaClient()
 prisma.user.create({
   data: {
     name: 'Marcel Igor',
-    email: 'marcel@rocketseat.com.br'
-  }
+    email: 'marcel@rocketseat.com.br',
+  },
 })

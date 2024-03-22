@@ -15,11 +15,42 @@ datasource db {
 
 // Este bloco define o modelo 'User' no banco de dados.
 model User {
-  id    String @id @default(uuid())
-  name  String
-  email String @unique // Define o campo 'email' como uma string na tabela e garante que cada valor seja único.
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique // Define o campo 'email' como uma string na tabela e garante que cada valor seja único.
+  password_hash String // Hash da senha do usuário.
+  created_at    DateTime  @default(now())
+  checkIns      CheckIn[] // Relacionamento com CheckIn: um usuário pode ter vários check-ins
 
   // @@map é uma anotação usada para definir o nome da tabela no banco de dados.
   // Neste caso, a tabela correspondente a este modelo será "users".
   @@map("users")
+}
+
+model CheckIn {
+  id           String    @id @default(uuid())
+  created_at   DateTime  @default(now())
+  validated_at DateTime?
+
+  // Relacionamento com User: cada check-in pertence a um usuário
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String // Chave estrangeira referenciando o id do usuário
+
+  // Relacionamento com Gym: cada check-in está associado a uma academia
+  gym    Gym    @relation(fields: [gym_id], references: [id])
+  gym_id String
+
+  @@map("check_ins")
+}
+
+model Gym {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  phone       String?
+  Latitude    Decimal
+  longitude   Decimal
+  checkIns    CheckIn[] // Relacionamento com CheckIn: cada academia pode ter vários check-ins
+
+  @@map("gyms")
 }
