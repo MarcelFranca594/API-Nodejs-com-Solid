@@ -3,5 +3,8 @@
   "prettier/prettier": [
     "error",
     { "endOfLine": "auto" }
-  ]
+  ],
+  "rules": {
+    "camelcase": "off"
+  }
 }
