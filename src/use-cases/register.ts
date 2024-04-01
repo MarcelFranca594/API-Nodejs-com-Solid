@@ -1,6 +1,7 @@
 import { usersRepository } from "@/repositories/users.repository";
 import { hash } from "bcryptjs"
 import { UserAlreadyExistsError } from "./erros/user-already-exists-error";
+import { User } from "@prisma/client";
 
 
 // Interface que define a estrutura esperada para o objeto de requisição de registro de usuário
@@ -15,6 +16,10 @@ interface RegisterUseCaseRequest {
 // SOLID
 // D - Dependency Inversion Principle
 
+interface RegisterUseCaseResponse {
+  user: User
+} 
+
 export class RegisterUseCase {
   constructor(private usersRepository: usersRepository){}
 
@@ -22,7 +27,7 @@ export class RegisterUseCase {
     name,
     email,
     password,
-  }: RegisterUseCaseRequest) {
+  }: RegisterUseCaseRequest): Promise<RegisterUseCaseResponse> {
     const password_hash = await hash(password, 6)
 
     const userWithSameEmail = await this.usersRepository.findByEmail(email)
@@ -31,10 +36,14 @@ export class RegisterUseCase {
       throw new UserAlreadyExistsError()
     }
   
-    await this.usersRepository.create({
+    const user = await this.usersRepository.create({
       name,
       email,
       password_hash,
     })
+
+    return {
+      user,
+    } 
   }
 }
