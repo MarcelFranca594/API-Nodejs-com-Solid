@@ -70,7 +70,7 @@ describe('Register Use Case', () => {
     })
     
     // Verificando se o registro com o mesmo email gera um erro de usuário já existente
-    expect(() => 
+    await expect(() => 
       registerUseCase.execute({
         name: 'John Doe',
         email, 
