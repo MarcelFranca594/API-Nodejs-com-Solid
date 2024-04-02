@@ -26,7 +26,7 @@ describe('Register Use Case', () => {
     expect(user.id).toEqual(expect.any(String))
   })
 
-  // Teste específico: verificar se a senha do usuário é corretamente hashada ao se registrar
+  // Teste específico: verificar se a senha do usuário é corretamente hash ao se registrar
   it('should hash user password upon registration', async () => {
     // Criando uma instância do repositório de usuários em memória
     const usersRepository = new InMemoryUsersRepository()
