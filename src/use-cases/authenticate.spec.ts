@@ -1,21 +1,23 @@
-import { expect, describe, it} from 'vitest'
+import { expect, describe, it, beforeEach} from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { AuthenticateUseCase } from './authenticate'
 import { hash } from 'bcryptjs'
 import { InvalidCredentialsError } from './erros/invalid-credentials-error'
 
 
+let usersRepository: InMemoryUsersRepository
+let sut: AuthenticateUseCase
+
 // Descrevendo o conjunto de testes relacionados ao caso de uso de registro
 describe('Authenticate Use Case', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository() // Criando uma instância do repositório de usuários em memória
+    sut = new AuthenticateUseCase(usersRepository) // sut => principal variável que está sendo testada
+  })
 
   // Teste: Se um usuário consegue se autenticar na aplicação
   it('should be able to authenticate', async () => {
-    // Criando uma instância do repositório de usuários em memória
-    const usersRepository = new InMemoryUsersRepository()
-    // Instanciando o caso de uso de autenticação (SUT - System Under Test)
-    const sut = new AuthenticateUseCase(usersRepository) // sut => principal variável que está sendo testada
-    
-    // Criando um usuário de exemplo e armazenando-o no repositório
+   // Criando um usuário de exemplo e armazenando-o no repositório
     await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe@example.com',
@@ -35,12 +37,7 @@ describe('Authenticate Use Case', () => {
 
   // Teste: Não deve ser possível autenticar com e-mail errado
   it('should not be able to authenticate with wrong email', async () => {
-    // Criando uma instância do repositório de usuários em memória
-    const usersRepository = new InMemoryUsersRepository()
-    // Instanciando o caso de uso de autenticação (SUT - System Under Test)
-    const sut = new AuthenticateUseCase(usersRepository) // sut => principal variável que está sendo testada
-    
-    // Espera-se que a execução do caso de uso com um email e senha inválidos gere um erro de credenciais inválidas
+  // Espera-se que a execução do caso de uso com um email e senha inválidos gere um erro de credenciais inválidas
     expect(() => sut.execute({
       email: 'johndoe@example.com',
       password: '123456',
@@ -49,11 +46,6 @@ describe('Authenticate Use Case', () => {
   })
 
   it('should not be able to authenticate with wrong password', async () => {
-    // Criando uma instância do repositório de usuários em memória
-    const usersRepository = new InMemoryUsersRepository()
-    // Instanciando o caso de uso de autenticação (SUT - System Under Test)
-    const sut = new AuthenticateUseCase(usersRepository) // sut => principal variável que está sendo testada
-
     await usersRepository.create({
       name: 'John Doe',
       email: 'johndoe@example.com',
