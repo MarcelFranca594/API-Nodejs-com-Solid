@@ -6,6 +6,20 @@ export class InMemoryUsersRepository implements usersRepository {
   // Declaração de um array chamado items que armazenará os usuários
   public items: User[] = [] 
 
+   // Método assíncrono para buscar um usuário pelo e-mail
+   async findById(id: string){
+    // Usa o método find para buscar um usuário com o e-mail fornecido no array de items
+    const user = this.items.find(item => item.id === id)
+
+    // Se o usuário não for encontrado, retorna null
+    if(!user){
+      return null
+    }
+
+    // Retorna o usuário encontrado
+    return user
+  }
+
   // Método assíncrono para buscar um usuário pelo e-mail
   async findByEmail(email: string){
     // Usa o método find para buscar um usuário com o e-mail fornecido no array de items
