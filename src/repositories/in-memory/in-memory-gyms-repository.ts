@@ -1,22 +1,37 @@
-import { Gym } from "@prisma/client";
+import { Gym, Prisma } from "@prisma/client";
 import { GymsRepository } from "../gyms-repository";
+import { randomUUID } from "crypto";
 
-// Declaração da classe InMemoryUsersRepository que implementa a interface usersRepository
+
 export class InMemoryGymsRepository implements GymsRepository {
-  // Declaração de um array chamado items que armazenará os usuários
   public items: Gym[] = [] 
 
-   // Método assíncrono para buscar um usuário pelo e-mail
+   
    async findById(id: string){
-    // Usa o método find para buscar um usuário com o e-mail fornecido no array de items
+    
     const gym = this.items.find(item => item.id === id)
 
-    // Se o usuário não for encontrado, retorna null
+    
     if(!gym){
       return null
     }
-
-    // Retorna o usuário encontrado
+    
     return gym
+  }
+
+  async create(data: Prisma.GymCreateInput){
+    const gym = {
+      id: data.id ?? randomUUID(), 
+      title: data.title,
+      description: data.description ?? null,
+      phone: data.phone ?? null,
+      Latitude: new Prisma.Decimal(data.Latitude.toString()),
+      longitude: new Prisma.Decimal(data.longitude.toString()),
+      created_at: new Date(), // Define a data de criação como a data atual
+    }
+
+    this.items.push(gym)
+
+    return gym 
   }
 }
