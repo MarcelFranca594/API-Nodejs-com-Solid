@@ -1,17 +1,28 @@
-import { expect, describe, it, beforeEach, afterEach ,vi } from 'vitest'
+import { expect, describe, it, beforeEach, afterEach, vi } from 'vitest'
 import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository'
 import { CheckInUseCase } from './check-in'
-
-
+import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms-repository'
+import { Decimal } from '@prisma/client/runtime/library'
 
 let checkInsRepository: InMemoryCheckInsRepository
+let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
 // Descrevendo o conjunto de testes relacionados ao caso de uso de registro
 describe('Check-in Use Case', () => {
   beforeEach(() => {
     checkInsRepository = new InMemoryCheckInsRepository() // Criando uma instância do repositório de usuários em memória
-    sut = new CheckInUseCase(checkInsRepository)   // Criando uma instância do caso de uso de registro, passando o repositório criado
+    gymsRepository = new InMemoryGymsRepository()
+    sut = new CheckInUseCase(checkInsRepository, gymsRepository)   // Criando uma instância do caso de uso de registro, passando o repositório criado
+
+    gymsRepository.items.push({
+      id: 'gym-01',
+      title: 'Javascript Gym',
+      description: '',
+      phone: '',
+      Latitude: new Decimal(0),
+      longitude: new Decimal(0),
+    })
 
     vi.useFakeTimers()
 })
@@ -19,16 +30,15 @@ describe('Check-in Use Case', () => {
     vi.useRealTimers()
   })
 
-
   // Teste: deve ser capaz de registrar um usuário
   it('should be able to check-in', async () => {
-    vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
-
 
     // Executando o caso de uso de registro com dados de usuário específicos
     const { checkIn } = await sut.execute({
       gymId: 'gym-01',
       userId: 'user-01',
+      userLatitude:  -15.7218296,
+      userLongitude: -56.1374312,
     })
 
     console.log(checkIn.created_at)
@@ -44,12 +54,16 @@ describe('Check-in Use Case', () => {
     await sut.execute({
       gymId: 'gym-01',
       userId: 'user-01',
+      userLatitude:  -15.7218296,
+      userLongitude: -56.1374312,
     })
 
     await expect(() => 
       sut.execute({
         gymId: 'gym-01',
         userId: 'user-01',
+        userLatitude:  -15.7218296,
+        userLongitude: -56.1374312,
     }),
   ).rejects.toBeInstanceOf(Error)
   })
@@ -59,13 +73,18 @@ describe('Check-in Use Case', () => {
     await sut.execute({
       gymId: 'gym-01',
       userId: 'user-01',
+      userLatitude:  -15.7218296,
+      userLongitude: -56.1374312,
     })
+
 
     vi.setSystemTime(new Date(2022, 0, 21, 8, 0, 0))
 
     const { checkIn } = await sut.execute({
         gymId: 'gym-01',
         userId: 'user-01',
+        userLatitude:  -15.7218296,
+        userLongitude: -56.1374312,
     })
   
     expect(checkIn.id).toEqual(expect.any(String))
